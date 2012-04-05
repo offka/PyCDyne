@@ -114,9 +114,10 @@ class PyCDyneSMS(object):
         Send request to service
         """
         params.update({
-            'License': self.API_LICENSE
+            'LicenseKey': self.API_LICENSE
         })
         params = urllib.urlencode(params)
+        print params
 
         connection = httplib.HTTPConnection(self.API_HOST, timeout=self.CONNECTION_TIMEOUT)
         request_path = "%s/%s" % (self.API_PATH, method)
@@ -155,13 +156,4 @@ class PyCDyneSMS(object):
 
 # Debug section
 if __name__ == "__main__":
-    client = PyCDyneSMS("XXX")
-    response = client.simple_sms_send({
-        'PhoneNumber': '123123123',
-        'Message': 'This is a test'
-    })
-    print response
-    response = client.cancel_message({
-        'MessageID': response.get('SMSResponse').get('MessageID')
-    })
-    print response
+    pass
