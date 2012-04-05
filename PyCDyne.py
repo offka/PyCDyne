@@ -46,11 +46,6 @@ class PyCDyneSMS(object):
             "method": "GetUnreadIncomingMessages",
             "type": "GET",
             "keys": []
-        },
-        "advanced_sms_send": {
-            "method": "AdvancedSMSsend",
-            "type": "POST",
-            "keys": ["SMSRequests"]
         }
     }
     CONNECTION_TIMEOUT = 10
@@ -117,12 +112,20 @@ class PyCDyneSMS(object):
             'LicenseKey': self.API_LICENSE
         })
         params = urllib.urlencode(params)
-        print params
 
-        connection = httplib.HTTPConnection(self.API_HOST, timeout=self.CONNECTION_TIMEOUT)
+        connection = httplib.HTTPConnection(self.API_HOST, 80, timeout=self.CONNECTION_TIMEOUT)
         request_path = "%s/%s" % (self.API_PATH, method)
 
-        connection.request(request_type, request_path, params)
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent':'Mozilla/4.0'
+        }
+
+        if request_type == "POST":
+            connection.request(request_type, request_path, params, headers)
+        else:
+            connection.request(request_type, "%s?%s" % (request_path, params), "", headers)
+
         response = connection.getresponse()
 
         if response.status == self.RESPONSE_STATUS_OK:
@@ -151,7 +154,6 @@ class PyCDyneSMS(object):
 
         self.__validate_keys(params, keys)
         return self.__send_request(method, request_type, params)
-
 
 
 # Debug section
